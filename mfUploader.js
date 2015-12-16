@@ -14,7 +14,9 @@
             return "<div class='fileItem'><a class='remove' style='cursor:pointer;color:red'>[x]</a><span>" + file.name + "</span></div>";
         };
 
-        var uploaderTemplate = "<div><button class='choose' type='button'>" + config.text + "</button><input type='file' style='display:none' multiple/>" + (config.uploadBtn == true ? "<button class='upload' type='submit'>Upload</button>" : "") + "</div>",
+        config.allow = config.allow || '';
+
+        var uploaderTemplate = "<div><button class='choose' type='button'>" + config.text + "</button><input type='file' style='display:none' multiple accept='" + config.accept + "'/>" + (config.uploadBtn == true ? "<button class='upload' type='submit'>Upload</button>" : "") + "</div>",
             noFilesTemplate = "<div class='nofiles'>No file chosen</div>",
             uploadFolder = {}, uploader = config.el,
             noOfUploader = 0, noOfFiles = 0;
@@ -42,9 +44,9 @@
             $this.next().click();
         });
 
-        uploader.on('click', 'a.remove', function (event) {
+        uploader.on('click', '.remove', function (event) {
             event.preventDefault();
-            var $this = $(this), id = $this.parent().data('id');
+            var $this = $(this), id = $this.parent().parent().data('id');
             delete uploadFolder[id];
             $this.parent().remove();
             noOfFiles--;
@@ -57,9 +59,18 @@
         uploader.on('change', '[type=file]', function () {
             var $this = $(this), file, id, i = 0;
 
+            if (config.maxFileCount) {
+                if ((this.files.length + noOfFiles) > config.maxFileCount) {
+                    if (config.validation) {
+                        config.validation("You can't upload more then " + config.maxFileCount + " files");
+                    }
+                    return;
+                }
+            }
+
             $this.attr('name', 'files').parent().hide();
             fileUploader.append(uploaderTemplate);
-
+          
             for (; i < this.files.length; i++) {
                 file = this.files[i];
                 id = noOfUploader + '-' + file.name;
