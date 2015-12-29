@@ -9,6 +9,7 @@
             config.uploadBtn = true;
         }
         config.text = config.text || "Choose Files";
+        config.nofilestext = config.nofilestext || "No file chosen";
 
         config.itemTemplate = config.itemTemplate || function (file) {
             return "<div class='fileItem'><a class='remove' style='cursor:pointer;color:red'>[x]</a><span>" + file.name + "</span></div>";
@@ -17,7 +18,7 @@
         config.allow = config.allow || '';
 
         var uploaderTemplate = "<div><button class='choose' type='button'>" + config.text + "</button><input type='file' style='display:none' multiple accept='" + config.accept + "'/>" + (config.uploadBtn == true ? "<button class='upload' type='submit'>Upload</button>" : "") + "</div>",
-            noFilesTemplate = "<div class='nofiles'>No file chosen</div>",
+            noFilesTemplate = "<div class='nofiles'>" + config.nofilestext + "</div>",
             uploadFolder = {}, uploader = config.el,
             noOfUploader = 0, noOfFiles = 0;
 
@@ -145,8 +146,6 @@
             reset: reset
         }
     }
-
-    scope.mfUpload = mfUpload;
 
     scope.fn.mfUpload = function (config) {
         config.el = this;
